@@ -4,7 +4,11 @@ import datetime
 import pandas
 import csv
 import os
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+import sys
+if hasattr(sys, '_MEIPASS'):
+    BASE_DIR = sys._MEIPASS
+else:
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DADOS_FILE = os.path.join(BASE_DIR, "produtos.csv")
 
 def calculate_days_to_expiry(expiry_date):
@@ -22,14 +26,13 @@ def carregar_produtos(DADOS_FILE):
     try:
         df = pandas.read_csv(DADOS_FILE, delimiter=';', encoding='utf-8')
         df.columns = [col.strip().lower() for col in df.columns]
-        # Tenta encontrar a coluna do produto por variações
         produto_col = None
         for col in df.columns:
             if col in ["produto", "produtos", "nome", "item"]:
                 produto_col = col
                 break
         if not produto_col:
-            produto_col = df.columns[0]  # Assume a primeira coluna se não encontrar
+            produto_col = df.columns[0] 
         validade_col = None
         for col in df.columns:
             if col in ["validade", "data", "vencimento"]:
@@ -56,19 +59,50 @@ class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("📦 Produtos perto do vencimento")
-        self.geometry("420x320")
+        self.geometry("530x400")
         self.resizable(False, False)
+        self.configure(bg="black")
         self.create_widgets()
 
     def create_widgets(self):
         self.label_atual = tk.Label(self, text="Agora:")
-        self.label_atual.pack(pady=5)
+        self.label_atual.pack(pady=8)
+
+        form_frame = tk.Frame(self)
+        form_frame.pack(pady=5)
+        tk.Label(form_frame, text="Produto:").grid(row=0, column=0)
+        self.entry_produto = tk.Entry(form_frame)
+        self.entry_produto.grid(row=0, column=1)
+        tk.Label(form_frame, text="Validade (DD/MM/AAAA):").grid(row=0, column=2)
+        self.entry_validade = tk.Entry(form_frame)
+        self.entry_validade.grid(row=0, column=3)
+        self.button_add = tk.Button(form_frame, text="Adicionar", command=self.adicionar_produto)
+        self.button_add.grid(row=0, column=4, padx=5)
 
         self.text_area = tk.Text(self, height=13, width=50)
-        self.text_area.pack(pady=5)
+        self.text_area.pack(pady=8)
 
         self.button_ativar = tk.Button(self, text="Ativar Monitoramento", command=self.ativar)
         self.button_ativar.pack(pady=5)
+
+    def adicionar_produto(self):
+        produto = self.entry_produto.get().strip().title()
+        validade = self.entry_validade.get().strip()
+        try:
+            datetime.datetime.strptime(validade, '%d/%m/%Y')
+        except ValueError:
+            messagebox.showerror("Erro", "Data inválida. Use o formato DD/MM/AAAA.")
+            return
+        novo_arquivo = not os.path.exists(DADOS_FILE)
+        precisa_cabecalho = novo_arquivo or os.path.getsize(DADOS_FILE) == 0
+        with open(DADOS_FILE, 'a', newline='', encoding='utf-8') as file:
+            writer = csv.writer(file, delimiter=';')
+            if precisa_cabecalho:
+                writer.writerow(['produto', 'validade'])
+            writer.writerow([produto, validade])
+        self.entry_produto.delete(0, tk.END)
+        self.entry_validade.delete(0, tk.END)
+        messagebox.showinfo("Sucesso", f"Produto '{produto}' adicionado!")
 
     def ativar(self):
         self.button_ativar.config(state='disabled')
@@ -78,25 +112,30 @@ class App(tk.Tk):
         self.label_atual.config(text="Agora: " + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         try:
             produtos, erros = carregar_produtos(DADOS_FILE=DADOS_FILE)
-            texto = ""
+            produtos.sort(key=lambda x: x[1])
+            
+            self.text_area.tag_configure("vencido", foreground="red")
+            self.text_area.delete("1.0", tk.END)
+            
             for produto, dias in produtos:
-                if dias <= 30:
-                    texto += f"⚠️{produto}: {dias} ja venceu\n"
-                else: 
-                    texto += f"{produto}: {dias} para vencer\n"
+                if dias <= 0:
+                    linha = f"⚠️{produto}: {dias} dias - VENCIDO\n"
+                    self.text_area.insert(tk.END, linha, "vencido")
+                elif dias <= 30:
+                    linha = f"⚠️{produto}: {dias} dias para vencer\n"
+                    self.text_area.insert(tk.END, linha)
+                else:
+                    linha = f"{produto}: {dias} dias para vencer\n"
+                    self.text_area.insert(tk.END, linha)
 
             if erros:
-                texto += "\nErros encontrados:\n" + "\n".join(erros)
-
-            self.text_area.delete("1.0", tk.END)
-            self.text_area.insert(tk.END, texto)
+                self.text_area.insert(tk.END, "\nErros encontrados:\n" + "\n".join(erros), "vencido")
 
         except FileNotFoundError as e:
             messagebox.showerror("Erro", str(e))
 
-        self.after(2000, self.atualizar)
+        self.after(2000000, self.atualizar)
 
 if __name__ == "__main__":
-    
     app = App()
     app.mainloop()
