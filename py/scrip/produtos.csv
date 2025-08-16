@@ -1,11 +1,11 @@
-﻿produtos;validade
+produto;validade
 Arroz;01/10/2025
-batata;01/02/2010
+Batata;01/02/2010
 Pão;01/01/2024
 Queijo;31/12/2025
 Manteiga;01/01/2025
 Azeite;01/01/2024
-Oleo;01/01/2024
+Óleo;01/01/2024
 Salsicha;01/01/2025
 Carne;01/01/2025
 Café;01/01/2025
@@ -18,7 +18,7 @@ Pimenta;01/01/2026
 Sardinha;01/01/2026
 Alho;01/01/2026
 Melancia;01/01/2026
-Maça;01/01/2026
+Maçã;01/01/2026
 Limão;01/01/2026
 Aguardente;01/01/2026
 Mel;01/01/2026
@@ -26,9 +26,52 @@ Pimenta-do-reino;01/01/2026
 Tomate;01/01/2026
 Pimentão;01/01/2026
 Cenoura;01/01/2026
-Brocolis;01/01/2026
+Brócolis;01/01/2026
 Cebola;01/01/2026
 Couve-flor;01/01/2026
-
 Leite;14/08/2025
 Leite;20/08/2025
+Presunto;10/08/2025
+Requeijão;12/08/2025
+Frango;01/07/2025
+Peixe;01/06/2025
+Biscoito;01/09/2025
+Refrigerante;01/12/2025
+Suco;01/11/2025
+Molho de tomate;01/10/2025
+Vinagre;01/01/2023
+Sal;01/01/2022
+Fermento;01/01/2020
+Gelatina;01/01/2021
+Creme de leite;01/01/2024
+Iogurte Grego;01/09/2025
+Torrada;01/10/2025
+Granola;01/12/2025
+Aveia;01/01/2026
+Leite Condensado;01/01/2026
+Doce de leite;01/01/2026
+Cereal;01/01/2026
+Barra de cereal;01/01/2026
+Macarrão;01/01/2026
+Espaguete;01/01/2026
+Lasanha;01/01/2026
+Molho branco;01/01/2026
+Ervilha;01/01/2026
+Milho;01/01/2026
+Champignon;01/01/2026
+Palmito;01/01/2026
+Azeitona;01/01/2026
+Mostarda;01/01/2026
+Ketchup;01/01/2026
+Maionese;01/01/2026
+Sorvete;01/01/2026
+Picolé;01/01/2026
+Frutas cristalizadas;01/01/2026
+Panetone;01/01/2026
+Bacalhau;01/01/2026
+Tapioca;01/01/2026
+Polvilho;01/01/2026
+Canela;01/01/2026
+Cravo;01/01/2026
+Noz-moscada;01/01/2026
+
